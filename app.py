@@ -11,9 +11,9 @@ app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_USER'] = db['mysql_user']
 app.config['MYSQL_PASSWORD'] = db['mysql_password']
 app.config['MYSQL_DB'] = db['mysql_db']
+app.config['MYSQL_PORT'] = db['mysql_port']
 
 mysql = MySQL(app)
-
 
 @app.route('/')
 def index():
@@ -25,10 +25,12 @@ def index():
 def login():
     if request.method == "POST":
         userDetails = request.form
-        email = userDetails['name']
+        email = userDetails['email']
+        print('email checked: ', email)
         password = userDetails['password']
+        print('password checked: ', password)
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users(email, password) VALUES(%s, %s)", (email,password))
+        cur.execute("INSERT INTO users(email, password) VALUES(%s, %s)", (email, password))
         mysql.connection.commit()
         cur.close()
         return 'success'
