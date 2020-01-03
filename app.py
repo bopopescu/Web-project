@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from forms import LoginForm
 from flask_mysqldb import MySQL, MySQLdb
 import yaml
@@ -38,11 +38,12 @@ def sign_up():
         session['name'] = user_details['name']
         cur.close()
         return 'success'
-    return render_template('sign up.html')
+    return render_template('sign-up.html')
 
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+    # error_message = 'Incorrect login or password'
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -61,7 +62,7 @@ def login():
                 else:
                     return "Error: password and email don't match"
         except BaseException:
-            return render_template('index.html')
+            return render_template('login.html')  # Здесь почему-то не выводится сообщение об ошибке :(
 
     return render_template('login.html')
 
