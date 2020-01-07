@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, session, redirect
-from forms import LoginForm
 from flask_mysqldb import MySQL, MySQLdb
 import yaml
 
@@ -24,7 +23,7 @@ def index():
     return render_template('index.html', title='Web', user=user)
 
 
-@app.route('/sign up/', methods=['GET', 'POST'])
+@app.route('/sign-up/', methods=['GET', 'POST'])
 def sign_up():
     if request.method == "POST":
         user_details = request.form
@@ -34,8 +33,8 @@ def sign_up():
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO users(email, password, user_name) VALUES(%s, %s, %s)", (email, password, user_name))
         mysql.connection.commit()
+        # print(user_details)
         session['email'] = user_details['email']
-        session['name'] = user_details['name']
         cur.close()
         return 'success'
     return render_template('sign-up.html')
@@ -51,14 +50,14 @@ def login():
         curs = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         curs.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = curs.fetchone()
+       # print("в переменной user хранится : ", user)
         curs.close()
 
         try:
             if len(user) > 0:
                 if password == user['password']:
-                    # session['name'] = user['name']
-                    session['email'] = user['email']
-                    return render_template("home.html")
+                    print(user)
+                    return render_template('user.html', title='Home', user_name=user['user_name'])
                 else:
                     return "Error: password and email don't match"
         except BaseException:
